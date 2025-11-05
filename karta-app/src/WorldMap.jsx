@@ -1,0 +1,285 @@
+import React, { useState } from 'react';
+import { X, MapPin } from 'lucide-react';
+
+export default function WorldMapWithPins() {
+  const [pins, setPins] = useState([]);
+  const [selectedPin, setSelectedPin] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ title: '', description: '' });
+
+  const handleMapClick = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    const newPin = {
+      id: Date.now(),
+      x,
+      y,
+      title: '',
+      description: ''
+    };
+
+    setPins([...pins, newPin]);
+    setSelectedPin(newPin);
+    setIsEditing(true);
+    setEditForm({ title: '', description: '' });
+  };
+
+  const handleSavePin = () => {
+    if (selectedPin) {
+      setPins(pins.map(pin =>
+        pin.id === selectedPin.id
+          ? { ...pin, title: editForm.title, description: editForm.description }
+          : pin
+      ));
+      setIsEditing(false);
+      setSelectedPin(null);
+    }
+  };
+
+  const handleDeletePin = (pinId) => {
+    setPins(pins.filter(pin => pin.id !== pinId));
+    if (selectedPin?.id === pinId) {
+      setSelectedPin(null);
+      setIsEditing(false);
+    }
+  };
+
+  const handleEditPin = (pin) => {
+    setSelectedPin(pin);
+    setEditForm({ title: pin.title, description: pin.description });
+    setIsEditing(true);
+  };
+
+  return (
+    <div className="w-full h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-7xl mx-auto h-full flex gap-4">
+        {/* Main Map Area */}
+        <div className="flex-1 bg-white rounded-lg shadow-xl p-6 flex flex-col">
+          <div className="mb-4">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Interaktiv Världskarta</h1>
+            <p className="text-gray-600">Klicka på kartan för att sätta ut pins och lägga till information</p>
+          </div>
+
+          <div className="flex-1 relative bg-gradient-to-br from-sky-100 to-blue-200 rounded-lg overflow-hidden border-4 border-gray-300">
+            {/* World Map SVG */}
+            <svg
+              viewBox="0 0 1000 500"
+              className="w-full h-full cursor-crosshair"
+              onClick={handleMapClick}
+              style={{ userSelect: 'none' }}
+            >
+              {/* North America */}
+              <path
+                d="M 50 100 L 80 80 L 120 70 L 160 75 L 200 85 L 230 100 L 250 130 L 260 160 L 255 190 L 240 210 L 220 230 L 200 245 L 170 255 L 140 260 L 110 250 L 85 230 L 70 200 L 60 170 L 55 140 Z M 100 250 L 130 240 L 160 245 L 180 265 L 190 290 L 180 310 L 160 320 L 130 315 L 110 295 L 100 270 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
+              />
+
+              {/* South America */}
+              <path
+                d="M 220 280 L 240 270 L 260 275 L 275 295 L 285 325 L 290 360 L 285 395 L 275 425 L 260 445 L 240 455 L 220 450 L 205 430 L 195 400 L 195 365 L 200 330 L 210 300 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
+              />
+
+              {/* Europe */}
+              <path
+                d="M 450 100 L 480 95 L 510 100 L 530 115 L 540 135 L 535 155 L 520 170 L 500 180 L 480 185 L 460 180 L 445 165 L 440 145 L 445 120 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
+              />
+
+              {/* Africa */}
+              <path
+                d="M 460 200 L 490 195 L 520 200 L 545 215 L 560 240 L 565 270 L 565 305 L 560 340 L 545 370 L 520 390 L 490 400 L 465 395 L 445 380 L 435 355 L 430 325 L 435 290 L 445 255 L 455 225 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
+              />
+
+              {/* Asia */}
+              <path
+                d="M 550 80 L 600 75 L 650 80 L 700 90 L 750 105 L 790 125 L 820 150 L 835 180 L 840 210 L 835 240 L 820 265 L 790 280 L 750 285 L 710 280 L 670 270 L 640 255 L 610 235 L 585 210 L 565 180 L 555 150 L 550 120 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
+              />
+
+              {/* Australia */}
+              <path
+                d="M 750 340 L 790 335 L 825 345 L 850 365 L 860 390 L 855 415 L 835 435 L 805 445 L 770 445 L 745 435 L 730 415 L 730 385 L 740 360 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
+              />
+
+              {/* Antarctica */}
+              <path
+                d="M 100 470 L 900 470 L 880 485 L 120 485 Z"
+                fill="#e0f2fe"
+                stroke="#0369a1"
+                strokeWidth="1.5"
+              />
+
+              {/* Render pins */}
+              {pins.map(pin => (
+                <g key={pin.id}>
+                  <circle
+                    cx={pin.x * 10}
+                    cy={pin.y * 5}
+                    r="8"
+                    fill="#dc2626"
+                    stroke="#7f1d1d"
+                    strokeWidth="2"
+                    className="cursor-pointer hover:fill-red-700"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditPin(pin);
+                    }}
+                  />
+                  <circle
+                    cx={pin.x * 10}
+                    cy={pin.y * 5}
+                    r="12"
+                    fill="rgba(220, 38, 38, 0.3)"
+                    className="cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditPin(pin);
+                    }}
+                  />
+                  {pin.title && (
+                    <text
+                      x={pin.x * 10}
+                      y={pin.y * 5 - 15}
+                      textAnchor="middle"
+                      className="text-xs font-semibold fill-gray-800 pointer-events-none"
+                      style={{ textShadow: '0 0 3px white' }}
+                    >
+                      {pin.title.length > 20 ? pin.title.substring(0, 20) + '...' : pin.title}
+                    </text>
+                  )}
+                </g>
+              ))}
+            </svg>
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="w-96 bg-white rounded-lg shadow-xl p-6 flex flex-col">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <MapPin className="text-red-600" />
+            Pins ({pins.length})
+          </h2>
+
+          {/* Edit Form */}
+          {isEditing && selectedPin && (
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg border-2 border-blue-300">
+              <h3 className="font-bold text-lg mb-3 text-gray-800">
+                {selectedPin.title ? 'Redigera pin' : 'Ny pin'}
+              </h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    Titel
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.title}
+                    onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="T.ex. Paris, Versailles..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    Information
+                  </label>
+                  <textarea
+                    value={editForm.description}
+                    onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-24 resize-none"
+                    placeholder="Beskriv händelsen, platsen eller lägg till historisk kontext..."
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleSavePin}
+                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold transition-colors"
+                  >
+                    Spara
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsEditing(false);
+                      setSelectedPin(null);
+                    }}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold transition-colors"
+                  >
+                    Avbryt
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Pins List */}
+          <div className="flex-1 overflow-y-auto space-y-2">
+            {pins.length === 0 ? (
+              <div className="text-center py-12 text-gray-400">
+                <MapPin className="w-16 h-16 mx-auto mb-3 opacity-30" />
+                <p className="text-lg">Inga pins ännu</p>
+                <p className="text-sm mt-1">Klicka på kartan för att börja</p>
+              </div>
+            ) : (
+              pins.map(pin => (
+                <div
+                  key={pin.id}
+                  className="p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-400 transition-colors cursor-pointer"
+                  onClick={() => handleEditPin(pin)}
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h4 className="font-bold text-gray-800">
+                        {pin.title || <span className="text-gray-400 italic">Ingen titel</span>}
+                      </h4>
+                      {pin.description && (
+                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                          {pin.description}
+                        </p>
+                      )}
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeletePin(pin.id);
+                      }}
+                      className="ml-2 p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Info Box */}
+          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-gray-700">
+            <p className="font-semibold mb-1">💡 Tips:</p>
+            <ul className="space-y-1 text-xs">
+              <li>• Klicka på kartan för att sätta ut en pin</li>
+              <li>• Klicka på en pin för att redigera</li>
+              <li>• Pins sparas automatiskt i webbläsaren</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
