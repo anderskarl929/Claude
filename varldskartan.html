@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html lang="sv">
+<!--
+    INSTRUKTIONER FÖR ATT ANVÄNDA DIN EGEN VÄRLDSKARTBILD:
+
+    1. Placera din världskartbild (t.ex. worldmap.jpg, worldmap.png) i samma mapp som denna HTML-fil
+    2. På rad 122, ändra "worldmap.jpg" till namnet på din bild (t.ex. "min_karta.png")
+    3. Öppna denna HTML-fil i din webbläsare
+    4. Klicka på kartan för att sätta ut pins!
+
+    Tips: Fungerar med .jpg, .png, .gif eller andra bildformat!
+-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -105,111 +115,92 @@
                                 <p className="text-gray-600">Klicka på kartan för att sätta ut pins och lägga till information</p>
                             </div>
 
-                            <div className="flex-1 relative bg-gradient-to-br from-sky-100 to-blue-200 rounded-lg overflow-hidden border-4 border-gray-300">
-                                {/* World Map SVG */}
-                                <svg
-                                    viewBox="0 0 1000 500"
-                                    className="w-full h-full cursor-crosshair"
-                                    onClick={handleMapClick}
-                                    style={{ userSelect: 'none' }}
-                                >
-                                    {/* North America */}
-                                    <path
-                                        d="M 50 100 L 80 80 L 120 70 L 160 75 L 200 85 L 230 100 L 250 130 L 260 160 L 255 190 L 240 210 L 220 230 L 200 245 L 170 255 L 140 260 L 110 250 L 85 230 L 70 200 L 60 170 L 55 140 Z M 100 250 L 130 240 L 160 245 L 180 265 L 190 290 L 180 310 L 160 320 L 130 315 L 110 295 L 100 270 Z"
-                                        fill="#86efac"
-                                        stroke="#166534"
-                                        strokeWidth="1.5"
-                                    />
+                            <div
+                                className="flex-1 relative rounded-lg overflow-hidden border-4 border-gray-300 cursor-crosshair"
+                                onClick={handleMapClick}
+                                style={{ userSelect: 'none' }}
+                            >
+                                {/* Egen världskartbild - byt ut "worldmap.jpg" mot din egen bild */}
+                                <img
+                                    src="worldmap.jpg"
+                                    alt="Världskarta"
+                                    className="w-full h-full object-cover pointer-events-none"
+                                    style={{ userSelect: 'none', display: 'block' }}
+                                />
 
-                                    {/* South America */}
-                                    <path
-                                        d="M 220 280 L 240 270 L 260 275 L 275 295 L 285 325 L 290 360 L 285 395 L 275 425 L 260 445 L 240 455 L 220 450 L 205 430 L 195 400 L 195 365 L 200 330 L 210 300 Z"
-                                        fill="#86efac"
-                                        stroke="#166534"
-                                        strokeWidth="1.5"
-                                    />
+                                {/* Render pins */}
+                                {pins.map(pin => (
+                                    <div key={pin.id}>
+                                        {/* Pin marker */}
+                                        <div
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleEditPin(pin);
+                                            }}
+                                            style={{
+                                                position: 'absolute',
+                                                left: `${pin.x}%`,
+                                                top: `${pin.y}%`,
+                                                transform: 'translate(-50%, -50%)',
+                                                cursor: 'pointer',
+                                                zIndex: 10
+                                            }}
+                                        >
+                                            {/* Outer glow */}
+                                            <div style={{
+                                                width: '24px',
+                                                height: '24px',
+                                                borderRadius: '50%',
+                                                backgroundColor: 'rgba(220, 38, 38, 0.3)',
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -50%)'
+                                            }} />
 
-                                    {/* Europe */}
-                                    <path
-                                        d="M 450 100 L 480 95 L 510 100 L 530 115 L 540 135 L 535 155 L 520 170 L 500 180 L 480 185 L 460 180 L 445 165 L 440 145 L 445 120 Z"
-                                        fill="#86efac"
-                                        stroke="#166534"
-                                        strokeWidth="1.5"
-                                    />
-
-                                    {/* Africa */}
-                                    <path
-                                        d="M 460 200 L 490 195 L 520 200 L 545 215 L 560 240 L 565 270 L 565 305 L 560 340 L 545 370 L 520 390 L 490 400 L 465 395 L 445 380 L 435 355 L 430 325 L 435 290 L 445 255 L 455 225 Z"
-                                        fill="#86efac"
-                                        stroke="#166534"
-                                        strokeWidth="1.5"
-                                    />
-
-                                    {/* Asia */}
-                                    <path
-                                        d="M 550 80 L 600 75 L 650 80 L 700 90 L 750 105 L 790 125 L 820 150 L 835 180 L 840 210 L 835 240 L 820 265 L 790 280 L 750 285 L 710 280 L 670 270 L 640 255 L 610 235 L 585 210 L 565 180 L 555 150 L 550 120 Z"
-                                        fill="#86efac"
-                                        stroke="#166534"
-                                        strokeWidth="1.5"
-                                    />
-
-                                    {/* Australia */}
-                                    <path
-                                        d="M 750 340 L 790 335 L 825 345 L 850 365 L 860 390 L 855 415 L 835 435 L 805 445 L 770 445 L 745 435 L 730 415 L 730 385 L 740 360 Z"
-                                        fill="#86efac"
-                                        stroke="#166534"
-                                        strokeWidth="1.5"
-                                    />
-
-                                    {/* Antarctica */}
-                                    <path
-                                        d="M 100 470 L 900 470 L 880 485 L 120 485 Z"
-                                        fill="#e0f2fe"
-                                        stroke="#0369a1"
-                                        strokeWidth="1.5"
-                                    />
-
-                                    {/* Render pins */}
-                                    {pins.map(pin => (
-                                        <g key={pin.id}>
-                                            <circle
-                                                cx={pin.x * 10}
-                                                cy={pin.y * 5}
-                                                r="8"
-                                                fill="#dc2626"
-                                                stroke="#7f1d1d"
-                                                strokeWidth="2"
-                                                className="cursor-pointer hover:fill-red-700"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleEditPin(pin);
-                                                }}
+                                            {/* Pin circle */}
+                                            <div style={{
+                                                width: '16px',
+                                                height: '16px',
+                                                borderRadius: '50%',
+                                                backgroundColor: '#dc2626',
+                                                border: '2px solid #7f1d1d',
+                                                position: 'relative',
+                                                transition: 'background-color 0.2s'
+                                            }}
+                                            className="hover:bg-red-700"
                                             />
-                                            <circle
-                                                cx={pin.x * 10}
-                                                cy={pin.y * 5}
-                                                r="12"
-                                                fill="rgba(220, 38, 38, 0.3)"
-                                                className="cursor-pointer"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleEditPin(pin);
+                                        </div>
+
+                                        {/* Pin label */}
+                                        {pin.title && (
+                                            <div
+                                                style={{
+                                                    position: 'absolute',
+                                                    left: `${pin.x}%`,
+                                                    top: `${pin.y}%`,
+                                                    transform: 'translate(-50%, -200%)',
+                                                    pointerEvents: 'none',
+                                                    zIndex: 11
                                                 }}
-                                            />
-                                            {pin.title && (
-                                                <text
-                                                    x={pin.x * 10}
-                                                    y={pin.y * 5 - 15}
-                                                    textAnchor="middle"
-                                                    className="text-xs font-semibold fill-gray-800 pointer-events-none"
-                                                    style={{ textShadow: '0 0 3px white' }}
-                                                >
+                                            >
+                                                <div style={{
+                                                    backgroundColor: 'white',
+                                                    padding: '2px 6px',
+                                                    borderRadius: '4px',
+                                                    fontSize: '12px',
+                                                    fontWeight: '600',
+                                                    color: '#1f2937',
+                                                    textShadow: 'none',
+                                                    whiteSpace: 'nowrap',
+                                                    boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
+                                                }}>
                                                     {pin.title.length > 20 ? pin.title.substring(0, 20) + '...' : pin.title}
-                                                </text>
-                                            )}
-                                        </g>
-                                    ))}
-                                </svg>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
@@ -319,6 +310,7 @@
                                     <li>• Klicka på kartan för att sätta ut en pin</li>
                                     <li>• Klicka på en pin för att redigera</li>
                                     <li>• Pins sparas automatiskt i webbläsaren</li>
+                                    <li>• För att byta bild: redigera rad 122 i HTML-filen</li>
                                 </ul>
                             </div>
                         </div>
