@@ -4,16 +4,18 @@
     INSTRUKTIONER FÖR ATT ANVÄNDA DIN EGEN VÄRLDSKARTBILD:
 
     1. Placera din världskartbild (t.ex. worldmap.jpg, worldmap.png) i samma mapp som denna HTML-fil
-    2. På rad 122, ändra "worldmap.jpg" till namnet på din bild (t.ex. "min_karta.png")
+    2. På rad 122, ändra "Europa.jpg" till namnet på din bild (t.ex. "min_karta.png")
     3. Öppna denna HTML-fil i din webbläsare
     4. Klicka på kartan för att sätta ut pins!
 
     Tips: Fungerar med .jpg, .png, .gif eller andra bildformat!
+
+    DENNA FIL ANVÄNDER NU: Europa.jpg
 -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interaktiv Världskarta</title>
+    <title>Interaktiv Europakarta</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -111,7 +113,7 @@
                         {/* Main Map Area */}
                         <div className="flex-1 bg-white rounded-lg shadow-xl p-6 flex flex-col">
                             <div className="mb-4">
-                                <h1 className="text-3xl font-bold text-gray-800 mb-2">Interaktiv Världskarta</h1>
+                                <h1 className="text-3xl font-bold text-gray-800 mb-2">Interaktiv Europakarta</h1>
                                 <p className="text-gray-600">Klicka på kartan för att sätta ut pins och lägga till information</p>
                             </div>
 
@@ -120,10 +122,10 @@
                                 onClick={handleMapClick}
                                 style={{ userSelect: 'none' }}
                             >
-                                {/* Egen världskartbild - byt ut "worldmap.jpg" mot din egen bild */}
+                                {/* Egen världskartbild - Nu används Europa.jpg */}
                                 <img
-                                    src="worldmap.jpg"
-                                    alt="Världskarta"
+                                    src="Europa.jpg"
+                                    alt="Europakarta"
                                     className="w-full h-full object-cover pointer-events-none"
                                     style={{ userSelect: 'none', display: 'block' }}
                                 />
