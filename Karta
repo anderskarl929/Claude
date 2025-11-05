@@ -58,64 +58,72 @@ export default function EuropeMapWithPins() {
         {/* Main Map Area */}
         <div className="flex-1 bg-white rounded-lg shadow-xl p-6 flex flex-col">
           <div className="mb-4">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Interaktiv Europakarta</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Interaktiv Världskarta</h1>
             <p className="text-gray-600">Klicka på kartan för att sätta ut pins och lägga till information</p>
           </div>
           
           <div className="flex-1 relative bg-gradient-to-br from-sky-100 to-blue-200 rounded-lg overflow-hidden border-4 border-gray-300">
-            {/* Europe Map SVG */}
-            <svg 
-              viewBox="0 0 1000 800" 
+            {/* World Map SVG */}
+            <svg
+              viewBox="0 0 1000 500"
               className="w-full h-full cursor-crosshair"
               onClick={handleMapClick}
               style={{ userSelect: 'none' }}
             >
-              {/* Simplified Europe map outline */}
+              {/* North America */}
               <path
-                d="M 100 400 L 150 350 L 200 320 L 250 300 L 300 290 L 350 280 L 400 270 L 450 265 L 500 270 L 550 280 L 600 300 L 650 330 L 680 370 L 700 420 L 710 480 L 700 540 L 670 590 L 630 620 L 580 640 L 520 650 L 460 645 L 400 635 L 340 620 L 280 595 L 220 560 L 170 510 L 130 450 Z"
-                fill="#e0f2fe"
-                stroke="#0369a1"
-                strokeWidth="2"
+                d="M 50 100 L 80 80 L 120 70 L 160 75 L 200 85 L 230 100 L 250 130 L 260 160 L 255 190 L 240 210 L 220 230 L 200 245 L 170 255 L 140 260 L 110 250 L 85 230 L 70 200 L 60 170 L 55 140 Z M 100 250 L 130 240 L 160 245 L 180 265 L 190 290 L 180 310 L 160 320 L 130 315 L 110 295 L 100 270 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
               />
-              
-              {/* Scandinavia */}
+
+              {/* South America */}
               <path
-                d="M 450 100 L 480 80 L 510 70 L 540 75 L 560 90 L 570 120 L 565 160 L 550 200 L 530 230 L 500 250 L 470 260 L 450 250 L 440 220 L 440 180 L 445 140 Z"
-                fill="#e0f2fe"
-                stroke="#0369a1"
-                strokeWidth="2"
+                d="M 220 280 L 240 270 L 260 275 L 275 295 L 285 325 L 290 360 L 285 395 L 275 425 L 260 445 L 240 455 L 220 450 L 205 430 L 195 400 L 195 365 L 200 330 L 210 300 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
               />
-              
-              {/* Iberian Peninsula */}
+
+              {/* Europe */}
               <path
-                d="M 150 500 L 180 480 L 220 470 L 260 475 L 290 495 L 300 530 L 290 565 L 260 590 L 220 600 L 180 595 L 150 575 L 130 545 Z"
-                fill="#e0f2fe"
-                stroke="#0369a1"
-                strokeWidth="2"
+                d="M 450 100 L 480 95 L 510 100 L 530 115 L 540 135 L 535 155 L 520 170 L 500 180 L 480 185 L 460 180 L 445 165 L 440 145 L 445 120 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
               />
-              
-              {/* Italy */}
+
+              {/* Africa */}
               <path
-                d="M 480 450 L 500 430 L 515 450 L 520 490 L 515 530 L 505 570 L 495 610 L 485 640 L 475 620 L 470 580 L 470 540 L 475 500 Z"
-                fill="#e0f2fe"
-                stroke="#0369a1"
-                strokeWidth="2"
+                d="M 460 200 L 490 195 L 520 200 L 545 215 L 560 240 L 565 270 L 565 305 L 560 340 L 545 370 L 520 390 L 490 400 L 465 395 L 445 380 L 435 355 L 430 325 L 435 290 L 445 255 L 455 225 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
               />
-              
-              {/* Balkans */}
+
+              {/* Asia */}
               <path
-                d="M 550 450 L 580 440 L 610 445 L 630 465 L 640 495 L 635 525 L 620 550 L 600 565 L 575 570 L 555 560 L 545 530 L 545 490 Z"
-                fill="#e0f2fe"
-                stroke="#0369a1"
-                strokeWidth="2"
+                d="M 550 80 L 600 75 L 650 80 L 700 90 L 750 105 L 790 125 L 820 150 L 835 180 L 840 210 L 835 240 L 820 265 L 790 280 L 750 285 L 710 280 L 670 270 L 640 255 L 610 235 L 585 210 L 565 180 L 555 150 L 550 120 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
               />
-              
-              {/* British Isles */}
+
+              {/* Australia */}
               <path
-                d="M 200 250 L 230 230 L 260 235 L 280 255 L 285 285 L 275 315 L 255 335 L 225 340 L 200 330 L 185 305 L 185 270 Z"
+                d="M 750 340 L 790 335 L 825 345 L 850 365 L 860 390 L 855 415 L 835 435 L 805 445 L 770 445 L 745 435 L 730 415 L 730 385 L 740 360 Z"
+                fill="#86efac"
+                stroke="#166534"
+                strokeWidth="1.5"
+              />
+
+              {/* Antarctica */}
+              <path
+                d="M 100 470 L 900 470 L 880 485 L 120 485 Z"
                 fill="#e0f2fe"
                 stroke="#0369a1"
-                strokeWidth="2"
+                strokeWidth="1.5"
               />
 
               {/* Render pins */}
@@ -123,7 +131,7 @@ export default function EuropeMapWithPins() {
                 <g key={pin.id}>
                   <circle
                     cx={pin.x * 10}
-                    cy={pin.y * 8}
+                    cy={pin.y * 5}
                     r="8"
                     fill="#dc2626"
                     stroke="#7f1d1d"
@@ -136,7 +144,7 @@ export default function EuropeMapWithPins() {
                   />
                   <circle
                     cx={pin.x * 10}
-                    cy={pin.y * 8}
+                    cy={pin.y * 5}
                     r="12"
                     fill="rgba(220, 38, 38, 0.3)"
                     className="cursor-pointer"
@@ -148,7 +156,7 @@ export default function EuropeMapWithPins() {
                   {pin.title && (
                     <text
                       x={pin.x * 10}
-                      y={pin.y * 8 - 15}
+                      y={pin.y * 5 - 15}
                       textAnchor="middle"
                       className="text-xs font-semibold fill-gray-800 pointer-events-none"
                       style={{ textShadow: '0 0 3px white' }}
