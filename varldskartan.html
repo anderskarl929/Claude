@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="sv">
 <!--
-    INSTRUKTIONER FÖR ATT ANVÄNDA DIN EGEN VÄRLDSKARTBILD:
+    INSTRUKTIONER FÖR ATT ANVÄNDA EGNA KARTBILDER:
 
-    1. Placera din världskartbild (t.ex. worldmap.jpg, worldmap.png) i samma mapp som denna HTML-fil
-    2. På rad 122, ändra "Europa.jpg" till namnet på din bild (t.ex. "min_karta.png")
+    1. Placera dina kartbilder i samma mapp som denna HTML-fil med följande namn:
+       - Europa.jpg (eller .png)
+       - Asien.jpg
+       - Afrika.jpg
+       - Nordamerika.jpg
+       - Sydamerika.jpg
+       - Oceanien.jpg
+       - Varlden.jpg (världskarta)
+
+    2. Du kan ändra bildnamnen på rad 84-90 om du vill använda andra filnamn
     3. Öppna denna HTML-fil i din webbläsare
-    4. Klicka på kartan för att sätta ut pins!
+    4. Välj världsdel i menyn och klicka på kartan för att sätta ut pins!
 
     Tips: Fungerar med .jpg, .png, .gif eller andra bildformat!
-
-    DENNA FIL ANVÄNDER NU: Europa.jpg
 -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interaktiv Europakarta</title>
+    <title>Interaktiva Världskartor</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -39,7 +45,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect } = React;
 
         // Lucide Icons as inline SVG components
         const MapPin = ({ className }) => (
@@ -56,11 +62,67 @@
             </svg>
         );
 
+        const Globe = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+        );
+
         function WorldMapWithPins() {
-            const [pins, setPins] = useState([]);
+            // Definiera världsdelar med deras bilder
+            const regions = {
+                europa: { name: 'Europa', image: 'Europa.jpg', emoji: '🇪🇺' },
+                asien: { name: 'Asien', image: 'Asien.jpg', emoji: '🌏' },
+                afrika: { name: 'Afrika', image: 'Afrika.jpg', emoji: '🌍' },
+                nordamerika: { name: 'Nordamerika', image: 'Nordamerika.jpg', emoji: '🌎' },
+                sydamerika: { name: 'Sydamerika', image: 'Sydamerika.jpg', emoji: '🗺️' },
+                oceanien: { name: 'Oceanien', image: 'Oceanien.jpg', emoji: '🏝️' },
+                varlden: { name: 'Världen', image: 'Varlden.jpg', emoji: '🌐' }
+            };
+
+            const [currentRegion, setCurrentRegion] = useState('europa');
+            const [pinsByRegion, setPinsByRegion] = useState({
+                europa: [],
+                asien: [],
+                afrika: [],
+                nordamerika: [],
+                sydamerika: [],
+                oceanien: [],
+                varlden: []
+            });
             const [selectedPin, setSelectedPin] = useState(null);
             const [isEditing, setIsEditing] = useState(false);
             const [editForm, setEditForm] = useState({ title: '', description: '' });
+
+            // Hämta pins för nuvarande region
+            const pins = pinsByRegion[currentRegion];
+
+            // Uppdatera pins för en specifik region
+            const updatePinsForRegion = (newPins) => {
+                setPinsByRegion({
+                    ...pinsByRegion,
+                    [currentRegion]: newPins
+                });
+            };
+
+            // Ladda sparade pins från localStorage när komponenten mountas
+            useEffect(() => {
+                const savedPins = localStorage.getItem('worldMapPins');
+                if (savedPins) {
+                    try {
+                        setPinsByRegion(JSON.parse(savedPins));
+                    } catch (e) {
+                        console.error('Kunde inte ladda sparade pins:', e);
+                    }
+                }
+            }, []);
+
+            // Spara pins till localStorage när de ändras
+            useEffect(() => {
+                localStorage.setItem('worldMapPins', JSON.stringify(pinsByRegion));
+            }, [pinsByRegion]);
 
             const handleMapClick = (e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
@@ -75,7 +137,7 @@
                     description: ''
                 };
 
-                setPins([...pins, newPin]);
+                updatePinsForRegion([...pins, newPin]);
                 setSelectedPin(newPin);
                 setIsEditing(true);
                 setEditForm({ title: '', description: '' });
@@ -83,7 +145,7 @@
 
             const handleSavePin = () => {
                 if (selectedPin) {
-                    setPins(pins.map(pin =>
+                    updatePinsForRegion(pins.map(pin =>
                         pin.id === selectedPin.id
                             ? { ...pin, title: editForm.title, description: editForm.description }
                             : pin
@@ -94,7 +156,7 @@
             };
 
             const handleDeletePin = (pinId) => {
-                setPins(pins.filter(pin => pin.id !== pinId));
+                updatePinsForRegion(pins.filter(pin => pin.id !== pinId));
                 if (selectedPin?.id === pinId) {
                     setSelectedPin(null);
                     setIsEditing(false);
@@ -107,213 +169,280 @@
                 setIsEditing(true);
             };
 
+            const handleRegionChange = (regionKey) => {
+                setCurrentRegion(regionKey);
+                setSelectedPin(null);
+                setIsEditing(false);
+            };
+
             return (
                 <div className="w-full h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-                    <div className="max-w-7xl mx-auto h-full flex gap-4">
-                        {/* Main Map Area */}
-                        <div className="flex-1 bg-white rounded-lg shadow-xl p-6 flex flex-col">
-                            <div className="mb-4">
-                                <h1 className="text-3xl font-bold text-gray-800 mb-2">Interaktiv Europakarta</h1>
-                                <p className="text-gray-600">Klicka på kartan för att sätta ut pins och lägga till information</p>
+                    <div className="max-w-7xl mx-auto h-full flex flex-col gap-4">
+                        {/* Header med meny */}
+                        <div className="bg-white rounded-lg shadow-xl p-4">
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                    <Globe className="w-8 h-8 text-blue-600" />
+                                    <h1 className="text-2xl font-bold text-gray-800">Interaktiva Världskartor</h1>
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                    Totalt {Object.values(pinsByRegion).flat().length} pins
+                                </div>
                             </div>
 
-                            <div
-                                className="flex-1 relative rounded-lg overflow-hidden border-4 border-gray-300 cursor-crosshair"
-                                onClick={handleMapClick}
-                                style={{ userSelect: 'none' }}
-                            >
-                                {/* Egen världskartbild - Nu används Europa.jpg */}
-                                <img
-                                    src="Europa.jpg"
-                                    alt="Europakarta"
-                                    className="w-full h-full object-cover pointer-events-none"
-                                    style={{ userSelect: 'none', display: 'block' }}
-                                />
-
-                                {/* Render pins */}
-                                {pins.map(pin => (
-                                    <div key={pin.id}>
-                                        {/* Pin marker */}
-                                        <div
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleEditPin(pin);
-                                            }}
-                                            style={{
-                                                position: 'absolute',
-                                                left: `${pin.x}%`,
-                                                top: `${pin.y}%`,
-                                                transform: 'translate(-50%, -50%)',
-                                                cursor: 'pointer',
-                                                zIndex: 10
-                                            }}
-                                        >
-                                            {/* Outer glow */}
-                                            <div style={{
-                                                width: '24px',
-                                                height: '24px',
-                                                borderRadius: '50%',
-                                                backgroundColor: 'rgba(220, 38, 38, 0.3)',
-                                                position: 'absolute',
-                                                top: '50%',
-                                                left: '50%',
-                                                transform: 'translate(-50%, -50%)'
-                                            }} />
-
-                                            {/* Pin circle */}
-                                            <div style={{
-                                                width: '16px',
-                                                height: '16px',
-                                                borderRadius: '50%',
-                                                backgroundColor: '#dc2626',
-                                                border: '2px solid #7f1d1d',
-                                                position: 'relative',
-                                                transition: 'background-color 0.2s'
-                                            }}
-                                            className="hover:bg-red-700"
-                                            />
-                                        </div>
-
-                                        {/* Pin label */}
-                                        {pin.title && (
-                                            <div
-                                                style={{
-                                                    position: 'absolute',
-                                                    left: `${pin.x}%`,
-                                                    top: `${pin.y}%`,
-                                                    transform: 'translate(-50%, -200%)',
-                                                    pointerEvents: 'none',
-                                                    zIndex: 11
-                                                }}
-                                            >
-                                                <div style={{
-                                                    backgroundColor: 'white',
-                                                    padding: '2px 6px',
-                                                    borderRadius: '4px',
-                                                    fontSize: '12px',
-                                                    fontWeight: '600',
-                                                    color: '#1f2937',
-                                                    textShadow: 'none',
-                                                    whiteSpace: 'nowrap',
-                                                    boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
-                                                }}>
-                                                    {pin.title.length > 20 ? pin.title.substring(0, 20) + '...' : pin.title}
-                                                </div>
-                                            </div>
+                            {/* Världsdels-knappar */}
+                            <div className="flex flex-wrap gap-2">
+                                {Object.entries(regions).map(([key, region]) => (
+                                    <button
+                                        key={key}
+                                        onClick={() => handleRegionChange(key)}
+                                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                                            currentRegion === key
+                                                ? 'bg-blue-600 text-white shadow-lg scale-105'
+                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                        }`}
+                                    >
+                                        <span className="mr-1">{region.emoji}</span>
+                                        {region.name}
+                                        {pinsByRegion[key].length > 0 && (
+                                            <span className="ml-2 px-2 py-0.5 bg-white bg-opacity-30 rounded-full text-xs">
+                                                {pinsByRegion[key].length}
+                                            </span>
                                         )}
-                                    </div>
+                                    </button>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Sidebar */}
-                        <div className="w-96 bg-white rounded-lg shadow-xl p-6 flex flex-col">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                <MapPin className="text-red-600" />
-                                Pins ({pins.length})
-                            </h2>
-
-                            {/* Edit Form */}
-                            {isEditing && selectedPin && (
-                                <div className="mb-6 p-4 bg-blue-50 rounded-lg border-2 border-blue-300">
-                                    <h3 className="font-bold text-lg mb-3 text-gray-800">
-                                        {selectedPin.title ? 'Redigera pin' : 'Ny pin'}
-                                    </h3>
-                                    <div className="space-y-3">
-                                        <div>
-                                            <label className="block text-sm font-semibold text-gray-700 mb-1">
-                                                Titel
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={editForm.title}
-                                                onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                placeholder="T.ex. Paris, Versailles..."
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-semibold text-gray-700 mb-1">
-                                                Information
-                                            </label>
-                                            <textarea
-                                                value={editForm.description}
-                                                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-24 resize-none"
-                                                placeholder="Beskriv händelsen, platsen eller lägg till historisk kontext..."
-                                            />
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={handleSavePin}
-                                                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold transition-colors"
-                                            >
-                                                Spara
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setIsEditing(false);
-                                                    setSelectedPin(null);
-                                                }}
-                                                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold transition-colors"
-                                            >
-                                                Avbryt
-                                            </button>
-                                        </div>
-                                    </div>
+                        {/* Kart- och sidebar-område */}
+                        <div className="flex-1 flex gap-4 min-h-0">
+                            {/* Main Map Area */}
+                            <div className="flex-1 bg-white rounded-lg shadow-xl p-6 flex flex-col">
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold text-gray-800 mb-1">
+                                        {regions[currentRegion].emoji} {regions[currentRegion].name}
+                                    </h2>
+                                    <p className="text-gray-600 text-sm">Klicka på kartan för att sätta ut pins</p>
                                 </div>
-                            )}
 
-                            {/* Pins List */}
-                            <div className="flex-1 overflow-y-auto space-y-2">
-                                {pins.length === 0 ? (
-                                    <div className="text-center py-12 text-gray-400">
-                                        <MapPin className="w-16 h-16 mx-auto mb-3 opacity-30" />
-                                        <p className="text-lg">Inga pins ännu</p>
-                                        <p className="text-sm mt-1">Klicka på kartan för att börja</p>
+                                <div
+                                    className="flex-1 relative rounded-lg overflow-hidden border-4 border-gray-300 cursor-crosshair"
+                                    onClick={handleMapClick}
+                                    style={{ userSelect: 'none' }}
+                                >
+                                    {/* Kartbild */}
+                                    <img
+                                        src={regions[currentRegion].image}
+                                        alt={`${regions[currentRegion].name} karta`}
+                                        className="w-full h-full object-cover pointer-events-none"
+                                        style={{ userSelect: 'none', display: 'block' }}
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                        }}
+                                    />
+
+                                    {/* Fallback om bilden inte hittas */}
+                                    <div style={{
+                                        display: 'none',
+                                        width: '100%',
+                                        height: '100%',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        backgroundColor: '#f3f4f6',
+                                        flexDirection: 'column',
+                                        color: '#6b7280'
+                                    }}>
+                                        <Globe className="w-16 h-16 mb-4 opacity-30" />
+                                        <p className="text-lg font-semibold">Kartbild saknas</p>
+                                        <p className="text-sm mt-2">Lägg till {regions[currentRegion].image} i samma mapp</p>
                                     </div>
-                                ) : (
-                                    pins.map(pin => (
-                                        <div
-                                            key={pin.id}
-                                            className="p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-400 transition-colors cursor-pointer"
-                                            onClick={() => handleEditPin(pin)}
-                                        >
-                                            <div className="flex justify-between items-start">
-                                                <div className="flex-1">
-                                                    <h4 className="font-bold text-gray-800">
-                                                        {pin.title || <span className="text-gray-400 italic">Ingen titel</span>}
-                                                    </h4>
-                                                    {pin.description && (
-                                                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                                            {pin.description}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDeletePin(pin.id);
+
+                                    {/* Render pins */}
+                                    {pins.map(pin => (
+                                        <div key={pin.id}>
+                                            {/* Pin marker */}
+                                            <div
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleEditPin(pin);
+                                                }}
+                                                style={{
+                                                    position: 'absolute',
+                                                    left: `${pin.x}%`,
+                                                    top: `${pin.y}%`,
+                                                    transform: 'translate(-50%, -50%)',
+                                                    cursor: 'pointer',
+                                                    zIndex: 10
+                                                }}
+                                            >
+                                                {/* Outer glow */}
+                                                <div style={{
+                                                    width: '24px',
+                                                    height: '24px',
+                                                    borderRadius: '50%',
+                                                    backgroundColor: 'rgba(220, 38, 38, 0.3)',
+                                                    position: 'absolute',
+                                                    top: '50%',
+                                                    left: '50%',
+                                                    transform: 'translate(-50%, -50%)'
+                                                }} />
+
+                                                {/* Pin circle */}
+                                                <div style={{
+                                                    width: '16px',
+                                                    height: '16px',
+                                                    borderRadius: '50%',
+                                                    backgroundColor: '#dc2626',
+                                                    border: '2px solid #7f1d1d',
+                                                    position: 'relative',
+                                                    transition: 'background-color 0.2s'
+                                                }}
+                                                className="hover:bg-red-700"
+                                                />
+                                            </div>
+
+                                            {/* Pin label */}
+                                            {pin.title && (
+                                                <div
+                                                    style={{
+                                                        position: 'absolute',
+                                                        left: `${pin.x}%`,
+                                                        top: `${pin.y}%`,
+                                                        transform: 'translate(-50%, -200%)',
+                                                        pointerEvents: 'none',
+                                                        zIndex: 11
                                                     }}
-                                                    className="ml-2 p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
                                                 >
-                                                    <X className="w-5 h-5" />
+                                                    <div style={{
+                                                        backgroundColor: 'white',
+                                                        padding: '2px 6px',
+                                                        borderRadius: '4px',
+                                                        fontSize: '12px',
+                                                        fontWeight: '600',
+                                                        color: '#1f2937',
+                                                        textShadow: 'none',
+                                                        whiteSpace: 'nowrap',
+                                                        boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
+                                                    }}>
+                                                        {pin.title.length > 20 ? pin.title.substring(0, 20) + '...' : pin.title}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Sidebar */}
+                            <div className="w-96 bg-white rounded-lg shadow-xl p-6 flex flex-col">
+                                <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                    <MapPin className="text-red-600" />
+                                    Pins ({pins.length})
+                                </h2>
+
+                                {/* Edit Form */}
+                                {isEditing && selectedPin && (
+                                    <div className="mb-6 p-4 bg-blue-50 rounded-lg border-2 border-blue-300">
+                                        <h3 className="font-bold text-lg mb-3 text-gray-800">
+                                            {selectedPin.title ? 'Redigera pin' : 'Ny pin'}
+                                        </h3>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                                                    Titel
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={editForm.title}
+                                                    onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                    placeholder="T.ex. Paris, Versailles..."
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                                                    Information
+                                                </label>
+                                                <textarea
+                                                    value={editForm.description}
+                                                    onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-24 resize-none"
+                                                    placeholder="Beskriv händelsen, platsen eller lägg till historisk kontext..."
+                                                />
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={handleSavePin}
+                                                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold transition-colors"
+                                                >
+                                                    Spara
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setIsEditing(false);
+                                                        setSelectedPin(null);
+                                                    }}
+                                                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold transition-colors"
+                                                >
+                                                    Avbryt
                                                 </button>
                                             </div>
                                         </div>
-                                    ))
+                                    </div>
                                 )}
-                            </div>
 
-                            {/* Info Box */}
-                            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-gray-700">
-                                <p className="font-semibold mb-1">💡 Tips:</p>
-                                <ul className="space-y-1 text-xs">
-                                    <li>• Klicka på kartan för att sätta ut en pin</li>
-                                    <li>• Klicka på en pin för att redigera</li>
-                                    <li>• Pins sparas automatiskt i webbläsaren</li>
-                                    <li>• För att byta bild: redigera rad 122 i HTML-filen</li>
-                                </ul>
+                                {/* Pins List */}
+                                <div className="flex-1 overflow-y-auto space-y-2">
+                                    {pins.length === 0 ? (
+                                        <div className="text-center py-12 text-gray-400">
+                                            <MapPin className="w-16 h-16 mx-auto mb-3 opacity-30" />
+                                            <p className="text-lg">Inga pins ännu</p>
+                                            <p className="text-sm mt-1">Klicka på kartan för att börja</p>
+                                        </div>
+                                    ) : (
+                                        pins.map(pin => (
+                                            <div
+                                                key={pin.id}
+                                                className="p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-400 transition-colors cursor-pointer"
+                                                onClick={() => handleEditPin(pin)}
+                                            >
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex-1">
+                                                        <h4 className="font-bold text-gray-800">
+                                                            {pin.title || <span className="text-gray-400 italic">Ingen titel</span>}
+                                                        </h4>
+                                                        {pin.description && (
+                                                            <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                                                {pin.description}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeletePin(pin.id);
+                                                        }}
+                                                        className="ml-2 p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
+                                                    >
+                                                        <X className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                {/* Info Box */}
+                                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-gray-700">
+                                    <p className="font-semibold mb-1">💡 Tips:</p>
+                                    <ul className="space-y-1 text-xs">
+                                        <li>• Välj världsdel i menyn ovan</li>
+                                        <li>• Klicka på kartan för att sätta ut en pin</li>
+                                        <li>• Klicka på en pin för att redigera</li>
+                                        <li>• Pins sparas per världsdel</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
