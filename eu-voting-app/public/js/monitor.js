@@ -8,11 +8,12 @@ let seatElements = {};
 const GROUPS = {
   EPP:    { name: 'EPP',      color: '#003399' },
   SD:     { name: 'S&D',      color: '#CC0000' },
+  PfE:    { name: 'PfE',      color: '#1B2A4A' },
+  ECR:    { name: 'ECR',      color: '#0054A5' },
   RE:     { name: 'Renew',    color: '#FFD700' },
   GREENS: { name: 'Gröna',    color: '#009933' },
-  ECR:    { name: 'ECR',      color: '#0054A5' },
-  ID:     { name: 'ID',       color: '#2B3856' },
-  GUE:    { name: 'GUE/NGL',  color: '#8B0000' },
+  LEFT:   { name: 'Left',     color: '#8B0000' },
+  ESN:    { name: 'ESN',      color: '#4A3728' },
   NI:     { name: 'Grupplösa', color: '#999999' }
 };
 
@@ -198,7 +199,7 @@ function updateGroupBreakdown() {
     else groupData[g].noVote++;
   }
 
-  const groupOrder = ['EPP', 'SD', 'RE', 'GREENS', 'ECR', 'ID', 'GUE', 'NI'];
+  const groupOrder = ['EPP', 'SD', 'PfE', 'ECR', 'RE', 'GREENS', 'LEFT', 'ESN', 'NI'];
   const activeGroups = groupOrder.filter(g => groupData[g]);
 
   if (activeGroups.length === 0) {
