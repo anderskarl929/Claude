@@ -44,13 +44,14 @@ const EU_COUNTRIES = [
 
 // Political groups in the EU Parliament
 const POLITICAL_GROUPS = [
-  { id: 'EPP', name: 'EPP - Europeiska folkpartiet', color: '#003399' },
-  { id: 'SD', name: 'S&D - Socialdemokraterna', color: '#CC0000' },
-  { id: 'RE', name: 'Renew Europe', color: '#FFD700' },
-  { id: 'GREENS', name: 'Gröna/EFA', color: '#009933' },
-  { id: 'ECR', name: 'ECR - Konservativa', color: '#0054A5' },
-  { id: 'ID', name: 'ID - Identitet och Demokrati', color: '#2B3856' },
-  { id: 'GUE', name: 'GUE/NGL - Vänsterpartiet', color: '#8B0000' },
+  { id: 'EPP', name: 'EPP - Kristdemokrater & konservativa (M, KD)', color: '#003399' },
+  { id: 'SD', name: 'S&D - Socialdemokrater (S)', color: '#CC0000' },
+  { id: 'PfE', name: 'PfE - Patrioter för Europa', color: '#1B2A4A' },
+  { id: 'ECR', name: 'ECR - Konservativa & reformister (SD)', color: '#0054A5' },
+  { id: 'RE', name: 'Renew Europe - Liberaler (C, L)', color: '#FFD700' },
+  { id: 'GREENS', name: 'Gröna/EFA (MP)', color: '#009933' },
+  { id: 'LEFT', name: 'The Left - Vänstern (V)', color: '#8B0000' },
+  { id: 'ESN', name: 'ESN - Europas suveräna nationer', color: '#4A3728' },
   { id: 'NI', name: 'Grupplösa', color: '#999999' }
 ];
 
