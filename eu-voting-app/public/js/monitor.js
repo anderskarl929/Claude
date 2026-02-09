@@ -259,7 +259,7 @@ socket.on('state', (state) => {
   students = state.students;
   votes = state.votes || {};
 
-  buildHemicycle(session.totalSeats || 58);
+  buildHemicycle(session.totalSeats || 40);
   updateSeats();
   updateTotals();
   updateGroupBreakdown();
@@ -272,7 +272,7 @@ socket.on('state', (state) => {
 
 socket.on('session:update', (s) => {
   session = s;
-  buildHemicycle(s.totalSeats || 58);
+  buildHemicycle(s.totalSeats || 40);
   updateSeats();
   updateTotals();
   updateTopicBar();
@@ -341,4 +341,4 @@ function updateTopicBar() {
 
 // ─── Init ────────────────────────────────────────────────────────────────────
 
-buildHemicycle(58);
+buildHemicycle(40);

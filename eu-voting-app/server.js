@@ -61,7 +61,7 @@ let currentSession = {
   active: false,
   topic: '',
   votingOpen: false,
-  totalSeats: 58
+  totalSeats: 40
 };
 let sessionHistory = []; // past voting results
 let adminPassword = 'eu2026';
