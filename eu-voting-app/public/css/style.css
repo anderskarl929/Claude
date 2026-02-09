@@ -307,6 +307,7 @@ textarea { resize: vertical; font-family: inherit; }
 .vote-status-ja { background: var(--green-bg); color: var(--green); }
 .vote-status-nej { background: var(--red-bg); color: var(--red); }
 .vote-status-avstår { background: var(--yellow-bg); color: var(--yellow); }
+.vote-status-warning { background: rgba(255, 171, 0, 0.1); color: var(--yellow); animation: pulse 1.5s ease infinite; }
 
 /* Result on student page */
 .result-verdict {

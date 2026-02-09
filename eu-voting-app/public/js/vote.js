@@ -1,7 +1,13 @@
-const socket = io();
+const socket = io({
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000
+});
 
 let mySeat = null;
 let myVote = null;
+let myCredentials = null; // Sparas för automatisk återanslutning
 
 // ─── Elements ────────────────────────────────────────────────────────────────
 
@@ -65,7 +71,8 @@ loginForm.addEventListener('submit', (e) => {
     return;
   }
 
-  socket.emit('student:join', { seatNumber, name, country, group });
+  myCredentials = { seatNumber, name, country, group };
+  socket.emit('student:join', myCredentials);
 });
 
 socket.on('joined', (data) => {
@@ -84,6 +91,25 @@ socket.on('joined', (data) => {
 
   loginScreen.classList.add('hidden');
   votingScreen.classList.remove('hidden');
+
+  // Dölj ev. varningsmeddelande
+  voteStatus.classList.add('hidden');
+});
+
+// ─── Automatisk återanslutning ───────────────────────────────────────────────
+
+socket.on('connect', () => {
+  if (myCredentials && mySeat) {
+    socket.emit('student:join', myCredentials);
+  }
+});
+
+socket.on('disconnect', () => {
+  if (mySeat) {
+    voteStatus.textContent = 'Anslutningen tappades - återansluter...';
+    voteStatus.className = 'vote-status vote-status-warning';
+    voteStatus.classList.remove('hidden');
+  }
 });
 
 // ─── Voting ──────────────────────────────────────────────────────────────────
